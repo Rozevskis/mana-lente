@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ArticlesModule } from './articles/articles.module';
 
 @Module({
   imports: [
@@ -20,6 +21,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
+
+    ArticlesModule,
   ],
 })
 export class AppModule {}
