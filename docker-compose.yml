@@ -21,7 +21,7 @@ services:
       - ./frontend:/app
     stdin_open: true
     tty: true
-    command: npm run dev
+    command: npm start
 
   db:
     image: postgres:15
