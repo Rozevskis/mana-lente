@@ -16,7 +16,7 @@ const App = () => {
 
     setLoading(true);
     try {
-      const apiKey = import.meta.env.REACT_APP_OPENAI_API_KEY;
+      const apiKey = import.meta.env.OPENAI_API_KEY;
 
       const result = await axios.post(
         "https://api.openai.com/v1/chat/completions",
