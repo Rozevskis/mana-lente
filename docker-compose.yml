@@ -3,32 +3,38 @@ services:
     build: ./backend
     container_name: nest_backend
     ports:
-      - '3000:3000'
+      - "3000:3000"
     env_file:
       - .env
     depends_on:
       - db
     volumes:
-      - ./backend:/app
+      - ./backend:/src
     command: npm run start:dev
 
   frontend:
     build: ./frontend
     container_name: react_frontend
     ports:
-      - '5173:5173'
+      - "5173:5173"
+    env_file:
+      - .env
     volumes:
-      - ./frontend:/app
+      - ./frontend:/src
+      - /src/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:3000
+      - CHOKIDAR_USEPOLLING=true
+    command: npm run dev -- --host 0.0.0.0
     stdin_open: true
     tty: true
-    command: npm start
 
   db:
     image: postgres:15
     container_name: postgres_news_db
     restart: always
     ports:
-      - '5432:5432'
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
