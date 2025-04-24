@@ -13,7 +13,7 @@ const ArticleList = () => {
         const data = await getArticles();
         setArticles(data);
         setLoading(false);
-      } catch (err) {
+      } catch {
         setError("Failed to load articles");
         setLoading(false);
       }
@@ -29,20 +29,31 @@ const ArticleList = () => {
     <div className="article-list">
       {articles.map((article) => (
         <div key={article.id} className="article-card">
-          <h2 className="article-title">{article.title}</h2>
-          <p className="article-description">{article.description}</p>
-          <div className="article-meta">
-            <span className="article-date">
-              {new Date(article.publishedAt).toLocaleDateString()}
-            </span>
-            <a
-              href={article.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="article-link"
-            >
-              Read more
-            </a>
+          {article.image && (
+            <div className="article-image">
+              <img src={article.image} alt={article.title} />
+            </div>
+          )}
+          <div className="article-content">
+            <h2 className="article-title">{article.title}</h2>
+            <p className="article-description">{article.description}</p>
+            <div className="article-meta">
+              <span className="article-date">
+                {new Date(article.publishedAt).toLocaleDateString("lv-LV", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+              <a
+                href={article.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="article-link"
+              >
+                Lasīt vairāk
+              </a>
+            </div>
           </div>
         </div>
       ))}

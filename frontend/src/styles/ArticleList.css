@@ -14,13 +14,24 @@
 
 .article-card {
   background: white;
-  padding: 1rem;
   border-bottom: 1px solid #e5e5e5;
-  transition: background-color 0.2s ease-in-out;
 }
 
-.article-card:hover {
-  background-color: #f8f9fa;
+.article-image {
+  flex: 0 0 300px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.article-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-content {
+  flex: 1;
+  padding: 1rem ;
 }
 
 .article-title {
@@ -42,7 +53,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.75rem;
+  margin-top: auto;
+  padding-top: 1rem;
 }
 
 .article-date {
@@ -76,4 +88,19 @@
   padding: 2rem;
   color: #dc3545;
   font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .article-card {
+    flex-direction: column;
+  }
+
+  .article-image {
+    flex: 0 0 200px;
+    width: 100%;
+  }
+
+  .article-content {
+    padding: 1rem;
+  }
 }
