@@ -16,7 +16,12 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types"],
+    "paths": {
+      "@nestjs/*": ["node_modules/@nestjs/*"]
+    }
   },
   "watchOptions": {
     "watchFile": "fixedPollingInterval"
