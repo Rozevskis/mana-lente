@@ -4,6 +4,14 @@ import { Repository } from 'typeorm';
 import { Article } from './article.entity';
 import { Cron } from '@nestjs/schedule';
 import * as Parser from 'rss-parser';
+
+type RssEnclosure = {
+  url: string;
+  type?: string;
+};
+
+type Enclosure = RssEnclosure | RssEnclosure[] | undefined;
+
 const parser = new Parser();
 
 @Injectable()
@@ -16,7 +24,11 @@ export class ArticlesService {
   }
 
   findAll() {
-    return this.repo.find();
+    return this.repo.find({
+      order: {
+        publishedAt: 'DESC',
+      },
+    });
   }
 
   @Cron('*/30 * * * *') // every 30 min
@@ -25,12 +37,26 @@ export class ArticlesService {
     for (const item of feed.items) {
       const exists = await this.repo.findOneBy({ link: item.link });
       if (!exists) {
-        await this.repo.save({
+        let imageUrl: string | undefined = undefined;
+
+        const enclosure = item.enclosure as Enclosure;
+
+        if (Array.isArray(enclosure)) {
+          const image = enclosure.find((e) => e.type?.startsWith('image/'));
+          imageUrl = image?.url;
+        } else if (enclosure?.type?.startsWith('image/')) {
+          imageUrl = enclosure.url;
+        }
+
+        const article = this.repo.create({
           title: item.title,
           link: item.link,
-          description: item.contentSnippet,
+          description: item.contentSnippet || undefined,
+          image: imageUrl,
           publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
         });
+
+        await this.repo.save(article);
       }
     }
     console.log('RSS parsed and articles updated');
