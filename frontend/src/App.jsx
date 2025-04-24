@@ -1,76 +1,47 @@
-import { useState } from "react";
-import axios from "axios";
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import Navbar from "./components/Navbar";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Dashboard from "./components/Dashboard";
 import "./App.css";
-import ConnectionTest from "./components/ConnectionTest";
 
-const App = () => {
-  const [message, setMessage] = useState("");
-  const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(false);
+function PrivateRoute({ children }) {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? children : <Navigate to="/login" />;
+}
 
-  const handleMessageChange = (event) => {
-    setMessage(event.target.value);
-  };
-
-  const handleSendMessage = async () => {
-    if (message.trim() === "") return;
-
-    setLoading(true);
-    try {
-      const apiKey = import.meta.env.OPENAI_API_KEY;
-
-      const result = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          model: "gpt-3.5-turbo",
-          messages: [
-            {
-              role: "user",
-              content: message,
-            },
-          ],
-          max_tokens: 150,
-          temperature: 0.7,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      setResponse(result.data.choices[0].message.content);
-    } catch (error) {
-      console.error("Error fetching the OpenAI response:", error);
-      setResponse("Sorry, something went wrong.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+function App() {
   return (
-    <div className="App">
-      <ConnectionTest />
-      <h1>OpenAI Chat</h1>
-      <textarea
-        value={message}
-        onChange={handleMessageChange}
-        placeholder="Ask something..."
-        rows="5"
-        cols="40"
-      />
-      <br />
-      <button onClick={handleSendMessage} disabled={loading}>
-        {loading ? "Loading..." : "Send"}
-      </button>
-
-      <div>
-        <h2>Response:</h2>
-        <p>{response}</p>
-      </div>
-    </div>
+    <AuthProvider>
+      <Router>
+        <div className="App">
+          <Navbar />
+          <main>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="/" element={<Navigate to="/dashboard" />} />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </AuthProvider>
   );
-};
+}
 
 export default App;

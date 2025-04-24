@@ -14,7 +14,9 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<{ accessToken: string }> {
+  async register(
+    registerDto: RegisterDto,
+  ): Promise<{ token: string; user: any }> {
     const { email, username, password } = registerDto;
     const existingUserByEmail = await this.userRepository.findOne({
       where: { email },
@@ -39,16 +41,30 @@ export class AuthService {
 
     await this.userRepository.save(user);
 
-    const payload = { email: user.email, username: user.username, sub: user.id };
+    const payload = {
+      email: user.email,
+      username: user.username,
+      sub: user.id,
+    };
+    const token = this.jwtService.sign(payload);
+
+    // Return user data without password
+    const userResponse = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    };
+
     return {
-      accessToken: this.jwtService.sign(payload),
+      token,
+      user: userResponse,
     };
   }
 
   async login(
     email: string,
     password: string,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<{ token: string; user: any }> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -59,9 +75,23 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { email: user.email, username: user.username, sub: user.id };
+    const payload = {
+      email: user.email,
+      username: user.username,
+      sub: user.id,
+    };
+    const token = this.jwtService.sign(payload);
+
+    // Return user data without password
+    const userResponse = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    };
+
     return {
-      accessToken: this.jwtService.sign(payload),
+      token,
+      user: userResponse,
     };
   }
 }
