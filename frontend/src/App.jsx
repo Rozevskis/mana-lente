@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
+import ArticleList from "./components/ArticleList";
 import "./App.css";
 
 function PrivateRoute({ children }) {
@@ -27,6 +28,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/articles" element={<ArticleList />} />
               <Route
                 path="/dashboard"
                 element={
@@ -35,7 +37,7 @@ function App() {
                   </PrivateRoute>
                 }
               />
-              <Route path="/" element={<Navigate to="/dashboard" />} />
+              <Route path="/" element={<Navigate to="/articles" />} />
             </Routes>
           </main>
         </div>
