@@ -14,9 +14,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(
-    registerDto: RegisterDto,
-  ): Promise<{ token: string; user: any }> {
+  async register(registerDto: RegisterDto): Promise<{ token: string; user: any }> {
     const { email, username, password } = registerDto;
     const existingUserByEmail = await this.userRepository.findOne({
       where: { email },
@@ -61,10 +59,7 @@ export class AuthService {
     };
   }
 
-  async login(
-    email: string,
-    password: string,
-  ): Promise<{ token: string; user: any }> {
+  async login(email: string, password: string): Promise<{ token: string; user: any }> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
