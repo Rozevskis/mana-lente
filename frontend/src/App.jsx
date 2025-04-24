@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import "./App.css";
+import ConnectionTest from "./components/ConnectionTest";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -50,7 +51,8 @@ const App = () => {
 
   return (
     <div className="App">
-      <h1>OpenAI Chass</h1>
+      <ConnectionTest />
+      <h1>OpenAI Chat</h1>
       <textarea
         value={message}
         onChange={handleMessageChange}

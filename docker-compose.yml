@@ -10,7 +10,11 @@ services:
       - db
     volumes:
       - ./backend:/src
+      - /src/node_modules
     command: npm run start:dev
+    networks:
+      - app-network
+    restart: unless-stopped
 
   frontend:
     build: ./frontend
@@ -28,11 +32,14 @@ services:
     command: npm run dev -- --host 0.0.0.0
     stdin_open: true
     tty: true
+    networks:
+      - app-network
+    restart: unless-stopped
 
   db:
     image: postgres:15
     container_name: postgres_news_db
-    restart: always
+    restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
@@ -41,6 +48,12 @@ services:
       POSTGRES_DB: news_portal
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
