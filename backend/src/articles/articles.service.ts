@@ -27,7 +27,7 @@ export class ArticlesService {
     });
   }
 
-  @Cron('*/1 * * * *') // every 30 min
+  @Cron('*/30 * * * *') // every 30 min
   async handleCron() {
     await this.rssScraperService.scrapeAndSaveArticles();
     await this.categorizationService.processUncategorizedArticles();

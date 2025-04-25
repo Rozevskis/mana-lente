@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import { Article } from './article.entity';
 import { ConfigService } from '@nestjs/config';
+import { OpenaiCategorizationService } from './openai-categorization.service';
 
 @Injectable()
 export class CategorizationService {
@@ -13,6 +14,7 @@ export class CategorizationService {
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
     private configService: ConfigService,
+    private openaiCategorizationService: OpenaiCategorizationService,
   ) {
     this.batchSize = this.configService.get<number>('CATEGORIZATION_BATCH_SIZE', 10);
     this.maxArticles = this.configService.get<number>('MAX_ARTICLES_TO_CATEGORIZE', 50);
@@ -60,9 +62,28 @@ export class CategorizationService {
         `Processing batch ${batchCount} with ${batch.length} articles: [${articleIds.join(', ')}]`,
       );
 
+      try {
+        // Get categorizations from OpenAI
+        const categorizations = await this.openaiCategorizationService.categorizeArticles(batch);
+
+        // Update articles with their categories
+        for (const categorization of categorizations) {
+          const article = batch.find((a) => a.id.toString() === categorization.articleId);
+          if (article) {
+            article.categories = categorization.categories;
+            await this.articleRepository.save(article);
+            console.log(
+              `Updated article ${article.id} with categories: ${categorization.categories.join(', ')}`,
+            );
+          }
+        }
+      } catch (error) {
+        console.error(`Error processing batch ${batchCount}:`, error);
+      }
+
       batchCount++;
     }
 
-    console.log('Articles  categorized');
+    console.log('Articles categorized');
   }
 }
