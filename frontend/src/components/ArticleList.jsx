@@ -35,6 +35,15 @@ const ArticleList = () => {
             </div>
           )}
           <div className="article-content">
+            {article.categories && article.categories.length > 0 && (
+              <div className="article-categories">
+                {article.categories.map((category) => (
+                  <span key={category} className="category-bubble">
+                    {category}
+                  </span>
+                ))}
+              </div>
+            )}
             <h2 className="article-title">{article.title}</h2>
             <p className="article-description">{article.description}</p>
             <div className="article-meta">
