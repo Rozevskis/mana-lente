@@ -19,4 +19,7 @@ export class Article {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   publishedAt: Date;
+
+  @Column({ type: 'jsonb', nullable: true })
+  categories: string[];
 }

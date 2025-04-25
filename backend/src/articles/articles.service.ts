@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Article } from './article.entity';
 import { Cron } from '@nestjs/schedule';
 import * as Parser from 'rss-parser';
+import { CategorizationService } from './categorization.service';
 
 type RssEnclosure = {
   url: string;
@@ -16,7 +17,10 @@ const parser = new Parser();
 
 @Injectable()
 export class ArticlesService {
-  constructor(@InjectRepository(Article) private repo: Repository<Article>) {}
+  constructor(
+    @InjectRepository(Article) private repo: Repository<Article>,
+    private categorizationService: CategorizationService,
+  ) {}
 
   create(data: Partial<Article>) {
     const article = this.repo.create(data);
@@ -60,5 +64,10 @@ export class ArticlesService {
       }
     }
     console.log('RSS parsed and articles updated');
+  }
+
+  @Cron('*/30 * * * *') // every 30 min
+  async processUncategorizedArticles() {
+    await this.categorizationService.processUncategorizedArticles();
   }
 }
