@@ -5,11 +5,12 @@ import { ArticlesService } from './articles.service';
 import { ArticlesController } from './articles.controller';
 import { Article } from './article.entity';
 import { CategorizationService } from './categorization.service';
+import { RssScraperService } from './rss-scraper.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Article]), ConfigModule],
   controllers: [ArticlesController],
-  providers: [ArticlesService, CategorizationService],
-  exports: [ArticlesService, CategorizationService],
+  providers: [ArticlesService, CategorizationService, RssScraperService],
+  exports: [ArticlesService, CategorizationService, RssScraperService],
 })
 export class ArticlesModule {}
