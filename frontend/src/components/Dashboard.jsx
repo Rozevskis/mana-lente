@@ -1,22 +1,73 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import "./Dashboard.css";
+import "../styles/Dashboard.css";
 
 const Dashboard = () => {
   const { currentUser } = useAuth();
+  const [biases, setBiases] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (currentUser?.categoryBiases) {
+      setBiases(currentUser.categoryBiases);
+    }
+  }, [currentUser]);
+
+  const handleBiasChange = (category, value) => {
+    setBiases((prev) => ({
+      ...prev,
+      [category]: Math.max(0.1, Math.min(0.9, parseFloat(value))),
+    }));
+  };
+
+  const saveBiases = async () => {
+    try {
+      // TODO: Add API call to save biases
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to save biases:", error);
+    }
+  };
 
   return (
     <div className="dashboard">
-      <h1>Welcome, {currentUser?.username || "User"}!</h1>
+      <div className="dashboard-header">Welcome, {currentUser?.username || "User"}!</div>
       <div className="dashboard-content">
         <div className="dashboard-card">
           <h2>Your Profile</h2>
           <p>Email: {currentUser?.email}</p>
           <p>Username: {currentUser?.username}</p>
         </div>
+
         <div className="dashboard-card">
-          <h2>News Feed</h2>
-          <p>Your personalized news feed will appear here.</p>
+          <div className="card-header">
+            <h2>Category Preferences</h2>
+            {!isEditing ? (
+              <button onClick={() => setIsEditing(true)}>Edit</button>
+            ) : (
+              <button onClick={saveBiases}>Save</button>
+            )}
+          </div>
+
+          <div className="biases-container">
+            {Object.entries(biases).map(([category, value]) => (
+              <div key={category} className="bias-item">
+                <label>{category}</label>
+                {isEditing ? (
+                  <input
+                    type="range"
+                    min="0.1"
+                    max="0.9"
+                    step="0.1"
+                    value={value}
+                    onChange={(e) => handleBiasChange(category, e.target.value)}
+                  />
+                ) : (
+                  <div className="bias-value">{value.toFixed(1)}</div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
