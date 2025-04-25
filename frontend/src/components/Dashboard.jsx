@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/Dashboard.css";
+import axios from "axios";
 
 const Dashboard = () => {
   const { currentUser } = useAuth();
   const [biases, setBiases] = useState({});
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (currentUser?.categoryBiases) {
@@ -22,16 +24,35 @@ const Dashboard = () => {
 
   const saveBiases = async () => {
     try {
-      // TODO: Add API call to save biases
+      setIsSaving(true);
+      const response = await axios.post(
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:3000"
+        }/users/preferences`,
+        { categoryBiases: biases },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      // Update the current user's biases
+      currentUser.categoryBiases = response.data.categoryBiases;
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to save biases:", error);
+      alert("Failed to save preferences. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
     <div className="dashboard">
-      <div className="dashboard-header">Welcome, {currentUser?.username || "User"}!</div>
+      <div className="dashboard-header">
+        Welcome, {currentUser?.username || "User"}!
+      </div>
       <div className="dashboard-content">
         <div className="dashboard-card">
           <h2>Your Profile</h2>
@@ -45,7 +66,9 @@ const Dashboard = () => {
             {!isEditing ? (
               <button onClick={() => setIsEditing(true)}>Edit</button>
             ) : (
-              <button onClick={saveBiases}>Save</button>
+              <button onClick={saveBiases} disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save"}
+              </button>
             )}
           </div>
 
