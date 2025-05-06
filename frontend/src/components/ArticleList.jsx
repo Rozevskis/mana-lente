@@ -1,26 +1,47 @@
 import { useEffect, useState } from "react";
 import { getArticles } from "../services/articleService";
+import { getUserBiases } from "../services/userService";
+import { sortArticlesByScore } from "../utils/articleSorting";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/ArticleList.css";
 
 const ArticleList = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const { currentUser, isAuthenticated } = useAuth();
+  
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const data = await getArticles();
-        setArticles(data);
+        const articlesData = await getArticles();
+        
+        // Get user biases if user is authenticated
+        let biases = null;
+        if (isAuthenticated && currentUser) {
+          // Try to get biases directly from currentUser
+          biases = currentUser.categoryBiases;
+        } else {
+          // Fallback to getting biases from localStorage
+          biases = getUserBiases();
+        }
+        
+        // Sort articles by score if user biases are available
+        const sortedArticles = biases 
+          ? sortArticlesByScore(articlesData, biases)
+          : articlesData;
+          
+        setArticles(sortedArticles);
         setLoading(false);
-      } catch {
+      } catch (err) {
+        console.error("Error in data fetching:", err);
         setError("Failed to load articles");
         setLoading(false);
       }
     };
 
     fetchArticles();
-  }, []);
+  }, [currentUser, isAuthenticated]);
 
   if (loading) return <div className="loading">Loading articles...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -46,6 +67,14 @@ const ArticleList = () => {
             )}
             <h2 className="article-title">{article.title}</h2>
             <p className="article-description">{article.description}</p>
+            
+            {/* Temporarily display score to verify functionality */}
+            {article.score !== undefined && (
+              <div className="article-score">
+                Score: {article.score.toFixed(3)}
+              </div>
+            )}
+            
             <div className="article-meta">
               <span className="article-date">
                 {new Date(article.publishedAt).toLocaleDateString("lv-LV", {

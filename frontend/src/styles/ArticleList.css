@@ -92,6 +92,18 @@
   text-decoration: underline;
 }
 
+.article-score {
+  display: inline-block;
+  background-color: #e6f7ff;
+  color: #0066cc;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  border: 1px solid #bfdfff;
+}
+
 .loading,
 .error {
   text-align: center;
