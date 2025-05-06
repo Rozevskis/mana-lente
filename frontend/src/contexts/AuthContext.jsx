@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 const AuthContext = createContext();
 
 export function useAuth() {
@@ -18,13 +20,12 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     console.log("Checking authentication status...");
     const token = localStorage.getItem("token");
-    console.log("Token from localStorage:", token);
 
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       // Fetch user data
       axios
-        .get("http://localhost:3000/auth/me")
+        .get(`${API_URL}/auth/me`)
         .then((response) => {
           console.log("User data received:", response.data);
           setCurrentUser(response.data);
@@ -46,7 +47,7 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     console.log("Attempting login...");
     try {
-      const response = await axios.post("http://localhost:3000/auth/login", {
+      const response = await axios.post(`${API_URL}/auth/login`, {
         email,
         password,
       });
@@ -65,7 +66,7 @@ export function AuthProvider({ children }) {
   const register = async (email, password, username) => {
     console.log("Attempting registration...");
     try {
-      const response = await axios.post("http://localhost:3000/auth/register", {
+      const response = await axios.post(`${API_URL}/auth/register`, {
         email,
         password,
         username,

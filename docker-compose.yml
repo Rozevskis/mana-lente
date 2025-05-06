@@ -27,7 +27,6 @@ services:
       - ./frontend:/src
       - /src/node_modules
     environment:
-      - VITE_API_URL=http://localhost:3000
       - CHOKIDAR_USEPOLLING=true
     command: npm run dev -- --host 0.0.0.0
     stdin_open: true

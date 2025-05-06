@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
@@ -13,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       // Verify token with backend
       axios
-        .get("http://localhost:3000/auth/verify", {
+        .get(`${API_URL}/auth/verify`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -33,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post("http://localhost:3000/auth/login", {
+      const response = await axios.post(`${API_URL}/auth/login`, {
         email,
         password,
       });

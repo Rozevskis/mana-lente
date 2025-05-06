@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import "./ConnectionTest.css";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 const ConnectionTest = () => {
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
@@ -11,7 +13,7 @@ const ConnectionTest = () => {
     setError("");
 
     try {
-      const response = await axios.get("http://localhost:3000");
+      const response = await axios.get(API_URL);
       setStatus(response.data.message);
     } catch (err) {
       console.error("Connection error:", err);
