@@ -1,0 +1,135 @@
+.category-bias-editor {
+  padding: 1rem;
+}
+
+.biases-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 80vh;
+  /* overflow-y: auto; */
+}
+
+.bias-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.bias-label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #333;
+}
+
+.bias-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bias-control input[type="range"] {
+  flex: 1;
+  height: 4px;
+  appearance: none;
+  background: #e5e5e5;
+  border-radius: 2px;
+  outline: none;
+}
+
+.bias-control input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+}
+
+.bias-control input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+}
+
+.bias-bar-container {
+  flex: 1;
+  height: 8px;
+  background: #e5e5e5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bias-bar {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 4px;
+}
+
+.bias-value {
+  width: 2rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.bias-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.save-button {
+  padding: 0.5rem 1rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.save-button:hover {
+  background-color: #2563eb;
+}
+
+.save-button:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .biases-container {
+    max-height: 60vh;
+  }
+}
+
+/* Compact version for the sidebar */
+.sidebar-editor.category-bias-editor {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.sidebar-editor .bias-item {
+  gap: 0.2rem;
+}
+
+.sidebar-editor .bias-label {
+  font-size: 0.75rem;
+}
+
+.sidebar-editor .bias-value {
+  font-size: 0.7rem;
+}
+
+.sidebar-editor .save-button {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+}

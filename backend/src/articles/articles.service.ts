@@ -28,7 +28,7 @@ export class ArticlesService {
       filterableColumns: {
         categories: true,
       },
-      select: ['id', 'title', 'description', 'link', 'image', 'publishedAt', 'categories'],
+      select: ['id', 'title', 'description', 'link', 'image', 'categories', 'publishedAt'],
       maxLimit: 50,
       defaultLimit: 20,
     });

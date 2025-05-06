@@ -1,4 +1,69 @@
-/* Container layout */
+/* Container for article list and debug panel */
+.article-list-container {
+  display: flex;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 120px);
+}
+
+/* Debug panel styles */
+.debug-panel {
+  flex: 0 0 300px;
+  background-color: #f8f9fa;
+  border-right: 1px solid #e2e8f0;
+  padding: 1rem;
+  overflow-y: auto;
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+}
+
+.debug-panel h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #4a5568;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.debug-section {
+  margin-top: 1rem;
+}
+
+.debug-section h4 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+}
+
+.debug-hint {
+  font-size: 0.75rem;
+  color: #718096;
+  margin-bottom: 0.75rem;
+}
+
+/* Article list styles */
+.article-list {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Article items container - grid layout for articles */
+.articles-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* For backwards compatibility with non-debug mode */
 .article-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -54,12 +119,6 @@
   background-color: #2563eb;
 }
 
-/* Article list grid */
-.article-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-}
 
 .no-articles {
   width: 100%;
@@ -119,6 +178,11 @@
     width: 100%;
     max-width: 100%;
   }
+}
+
+/* When debug panel is active, adjust article list */
+.with-debug-panel .article-list {
+  max-width: 1000px;
 }
 
 .article-card {
