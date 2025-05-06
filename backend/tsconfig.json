@@ -18,7 +18,7 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "types": ["node"],
-    "typeRoots": ["./node_modules/@types"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
       "@nestjs/*": ["node_modules/@nestjs/*"]
     }

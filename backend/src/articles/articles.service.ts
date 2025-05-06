@@ -5,6 +5,7 @@ import { Article } from './article.entity';
 import { Cron } from '@nestjs/schedule';
 import { CategorizationService } from './categorization.service';
 import { RssScraperService } from './rss-scraper.service';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 
 @Injectable()
 export class ArticlesService {
@@ -19,11 +20,17 @@ export class ArticlesService {
     return this.repo.save(article);
   }
 
-  findAll() {
-    return this.repo.find({
-      order: {
-        publishedAt: 'DESC',
+  findAll(query: PaginateQuery): Promise<Paginated<Article>> {
+    return paginate(query, this.repo, {
+      sortableColumns: ['id', 'title', 'publishedAt'],
+      searchableColumns: ['title', 'description'],
+      defaultSortBy: [['publishedAt', 'DESC']],
+      filterableColumns: {
+        categories: true,
       },
+      select: ['id', 'title', 'description', 'link', 'image', 'publishedAt', 'categories'],
+      maxLimit: 50,
+      defaultLimit: 20,
     });
   }
 
