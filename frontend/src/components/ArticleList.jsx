@@ -68,8 +68,8 @@ const ArticleList = () => {
             <h2 className="article-title">{article.title}</h2>
             <p className="article-description">{article.description}</p>
             
-            {/* Temporarily display score to verify functionality */}
-            {article.score !== undefined && (
+            {/* Display score only when debug mode is enabled */}
+            {article.score !== undefined && import.meta.env.VITE_DEBUG === "true" && (
               <div className="article-score">
                 Score: {article.score.toFixed(3)}
               </div>
