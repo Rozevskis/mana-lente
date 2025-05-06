@@ -7,21 +7,22 @@ import {
 } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 
-@Entity()
+@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('uuid', { name: 'user_id' })
   id: string;
 
-  @Column({ unique: true })
+  @Column({ name: 'user_email', unique: true })
   email: string;
 
-  @Column({ unique: true })
+  @Column({ name: 'user_username', unique: true })
   username: string;
 
-  @Column()
+  @Column({ name: 'user_password' })
   password: string;
 
   @Column('jsonb', {
+    name: 'user_category_bias',
     default: () => {
       const configService = new ConfigService();
       const categoriesStr = configService.get<string>('ARTICLE_CATEGORIES');
@@ -58,9 +59,9 @@ export class User {
   })
   categoryBiases: Record<string, number>;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

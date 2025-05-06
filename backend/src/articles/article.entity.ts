@@ -1,25 +1,25 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()
+@Entity('articles')
 export class Article {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'article_id' })
   id: number;
 
-  @Column()
+  @Column({ name: 'article_title' })
   title: string;
 
-  @Column()
+  @Column({ name: 'article_link' })
   link: string;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ name: 'article_description', nullable: true, type: 'text' })
   description: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'article_image', nullable: true })
   image: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ name: 'published_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   publishedAt: Date;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ name: 'article_categories', type: 'jsonb', nullable: true })
   categories: string[];
 }
