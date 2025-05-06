@@ -27,6 +27,7 @@ export class User {
       const configService = new ConfigService();
       const categoriesStr = configService.get<string>('ARTICLE_CATEGORIES');
       if (!categoriesStr) {
+        console.error('ARTICLE_CATEGORIES is not configured');
         return "'{}'";
       }
 
