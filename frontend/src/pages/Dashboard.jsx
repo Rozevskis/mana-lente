@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import CategoryBiasEditor from "./CategoryBiasEditor";
-import "../styles/Dashboard.css";
+import CategoryBiasEditor from "../components/articles/CategoryBiasEditor";
+import "./Dashboard.css";
 
 const Dashboard = () => {
   const { currentUser } = useAuth();

@@ -5,6 +5,8 @@
   justify-content: space-between;
   align-items: center;
   color: white;
+  width: 1240px;
+  max-width: 100dvw;
 }
 
 .navbar-brand a {
@@ -40,8 +42,24 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
+  width: fit-content;
 }
 
 .logout-button:hover {
   background-color: #c82333;
+}
+@media (max-width: 768px) {
+  .navbar-brand {
+    /* display: none; */
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-brand {
+    display: none;
+  }
+  .navbar-links{
+    width: 100%;
+    justify-content: space-between;
+  }
 }

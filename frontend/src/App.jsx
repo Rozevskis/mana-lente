@@ -6,11 +6,11 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import Navbar from "./components/Navbar";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Dashboard from "./components/Dashboard";
-import ArticleList from "./components/ArticleList";
+import Navbar from "./components/common/Navbar";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import Dashboard from "./pages/Dashboard";
+import ArticleList from "./pages/ArticleList";
 import "./App.css";
 
 function PrivateRoute({ children }) {

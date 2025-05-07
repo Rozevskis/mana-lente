@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/CategoryBiasEditor.css";
+import "./CategoryBiasEditor.css";
 
 const CategoryBiasEditor = ({ 
   initialBiases = {}, 

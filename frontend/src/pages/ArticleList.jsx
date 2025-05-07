@@ -4,8 +4,8 @@ import { getUserBiases } from "../services/userService";
 import { sortArticlesByScore } from "../utils/articleSorting";
 import { useAuth } from "../contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
-import CategoryBiasEditor from "./CategoryBiasEditor";
-import "../styles/ArticleList.css";
+import CategoryBiasEditor from "../components/articles/CategoryBiasEditor";
+import "./ArticleList.css";
 
 const ArticleList = () => {
   const [articles, setArticles] = useState([]);
