@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { getArticles } from "../services/articleService";
-import { getUserBiases } from "../services/userService";
-import { sortArticlesByScore } from "../utils/articleSorting";
+import { getSortedArticles } from "../services/articleService";
+import { getUserBiases, saveUserBiases } from "../services/userService";
 import { useAuth } from "../contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import CategoryBiasEditor from "../components/articles/CategoryBiasEditor";
@@ -9,7 +8,6 @@ import "./ArticleList.css";
 
 const ArticleList = () => {
   const [articles, setArticles] = useState([]);
-  const [originalArticles, setOriginalArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({
@@ -28,43 +26,39 @@ const ArticleList = () => {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
     const search = searchParams.get("search") || "";
-    const sortBy = searchParams.get("sortBy") || "publishedAt";
-    const sortOrder = searchParams.get("sortOrder") || "DESC";
     
     const fetchArticles = async () => {
       setLoading(true);
       try {
-        // Get articles with pagination
-        const response = await getArticles({
-          page,
-          limit,
-          search,
-          sortBy,
-          sortOrder
-        });
-        
-        // Extract data and pagination metadata
-        const { data: articlesData, meta } = response;
-        
-        // Store original unsorted articles
-        setOriginalArticles(articlesData);
-        
-        // Get user biases if user is authenticated
+        // Get user biases for the debug editor panel only
+        // The backend will handle determining which biases to use
         let biases = null;
         if (isAuthenticated && currentUser) {
           biases = currentUser.categoryBiases;
         } else {
           biases = getUserBiases();
         }
-        // Save biases for the editor
+        
+        // Save biases for the debug editor panel
         setUserBiases(biases);
         
-        // Sort articles by score if user biases are available
-        const sortedArticles = biases 
-          ? sortArticlesByScore(articlesData, biases)
-          : articlesData;
-          
-        setArticles(sortedArticles);
+        // Get sorted articles from backend
+        const response = await getSortedArticles({
+          page,
+          limit,
+          search,
+          sortBy: 'publishedAt',  // Always sort by date initially
+          sortOrder: 'DESC',      // Always newest first initially
+          biases: biases, // Always send biases regardless of authentication status
+          debug: isDebugMode // Always pass debug flag if in debug mode
+        });
+        
+        // Extract data and pagination metadata
+        const { data: articlesData, meta } = response;
+        
+        // Just display the sorted articles returned by the backend
+        setArticles(articlesData);
+        
         setPagination({
           page: meta.currentPage,
           limit: meta.itemsPerPage,
@@ -81,7 +75,7 @@ const ArticleList = () => {
     };
 
     fetchArticles();
-  }, [currentUser, isAuthenticated, searchParams]);
+  }, [currentUser, isAuthenticated, searchParams, isDebugMode]);
 
   // Handle page change
   const handlePageChange = (newPage) => {
@@ -107,13 +101,32 @@ const ArticleList = () => {
   };
 
   // Handle real-time bias changes in debug mode
-  const handleBiasesUpdate = (newBiases) => {
+  const handleBiasesUpdate = async (newBiases) => {
     setUserBiases(newBiases);
     
-    // Re-sort articles with new biases
-    if (originalArticles.length > 0) {
-      const resortedArticles = sortArticlesByScore(originalArticles, newBiases);
-      setArticles(resortedArticles);
+    // If not authenticated, save to local storage
+    if (!isAuthenticated) {
+      saveUserBiases(newBiases);
+    }
+    
+    // Re-fetch articles with new biases from backend
+    try {
+      // Re-fetch articles with the new biases
+      const response = await getSortedArticles({
+        page: pagination.page,
+        limit: pagination.limit,
+        search: searchParams.get("search") || "",
+        sortBy: 'publishedAt',
+        sortOrder: 'DESC',
+        biases: newBiases, // Send biases to backend
+        debug: isDebugMode // Pass debug flag
+      });
+      
+      // Update articles with sorted data from backend
+      const { data: sortedArticles } = response;
+      setArticles(sortedArticles);
+    } catch (err) {
+      console.error("Error updating articles with new biases:", err);
     }
   };
 
@@ -133,7 +146,6 @@ const ArticleList = () => {
               initialBiases={userBiases}
               onBiasesChange={handleBiasesUpdate}
               editable={true}
-              showSaveButton={isAuthenticated}
               className="sidebar-editor"
             />
           </div>

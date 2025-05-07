@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { updateUserBiases, saveUserBiases } from "../../services/userService";
+import { useAuth } from "../../contexts/AuthContext";
 import "./CategoryBiasEditor.css";
 
 const CategoryBiasEditor = ({ 
@@ -7,11 +8,11 @@ const CategoryBiasEditor = ({
   onBiasesChange = () => {}, 
   onSaveComplete = null,
   editable = true,
-  showSaveButton = true,
   className = "" 
 }) => {
   const [biases, setBiases] = useState(initialBiases);
-  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const { isAuthenticated, setCurrentUser } = useAuth();
 
   useEffect(() => {
     setBiases(initialBiases);
@@ -28,38 +29,44 @@ const CategoryBiasEditor = ({
     
     setBiases(newBiases);
     onBiasesChange(newBiases); // Immediately notify parent of changes
+    
+    // Always auto-save changes
+    saveBiases(newBiases);
   };
 
-  const saveBiases = async () => {
-    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const saveBiases = async (biasesToSave = null) => {
+    // Use provided biases or current state
+    const biasesData = biasesToSave || biases;
     try {
-      setIsSaving(true);
-      const response = await axios.post(
-        `${API_URL}/users/preferences`,
-        { categoryBiases: biases },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      setSaveError(null);
+      
+      if (isAuthenticated) {
+        // For authenticated users, update via API
+        const updatedUser = await updateUserBiases(biasesData);
+        
+        // Update current user with new biases
+        if (setCurrentUser && updatedUser) {
+          setCurrentUser(updatedUser);
         }
-      );
-      
-      // Use whatever the server sends back (might have sanitized values)
-      const updatedBiases = response.data.categoryBiases;
-      setBiases(updatedBiases);
-      onBiasesChange(updatedBiases);
-      
-      // Let other components know saving is done
-      // (fixes that sync bug between dashboard and article list)
-      if (onSaveComplete) {
-        onSaveComplete(updatedBiases);
+        
+        // Use whatever the server sends back (might have sanitized values)
+        const updatedBiases = updatedUser.categoryBiases;
+        setBiases(updatedBiases);
+        onBiasesChange(updatedBiases);
+      } else {
+        // For non-authenticated users, save to localStorage
+        saveUserBiases(biasesData);
+        
+        // No server sanitization, so just use what we have
+        onBiasesChange(biasesData);
       }
-      return true;
+      
+      if (onSaveComplete) {
+        onSaveComplete(biases);
+      }
     } catch (error) {
-      console.error("Failed to save biases:", error);
-      return false;
-    } finally {
-      setIsSaving(false);
+      console.error("Error saving preferences:", error);
+      setSaveError("Failed to save preferences. Please try again.");
     }
   };
 
@@ -93,15 +100,9 @@ const CategoryBiasEditor = ({
         ))}
       </div>
       
-      {showSaveButton && editable && (
+      {saveError && (
         <div className="bias-actions">
-          <button 
-            onClick={saveBiases} 
-            disabled={isSaving} 
-            className="save-button"
-          >
-            {isSaving ? "Saving..." : "Save Preferences"}
-          </button>
+          <div className="save-error">{saveError}</div>
         </div>
       )}
     </div>
