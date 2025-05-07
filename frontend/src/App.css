@@ -20,7 +20,6 @@ body {
 main {
   flex: 1;
   padding: 2rem;
-  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
 }
@@ -57,7 +56,7 @@ main {
 }
 
 #root {
-  max-width: 1280px;
+  max-width: 1480px;
   margin: 0 auto;
   padding: 0;
   text-align: center;

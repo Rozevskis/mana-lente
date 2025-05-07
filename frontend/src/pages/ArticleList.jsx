@@ -125,7 +125,7 @@ const ArticleList = () => {
       {/* Debug panel sidebar for real-time bias editing */}
       {isDebugMode && userBiases && (
         <div className="debug-panel">
-          <h3>Debug Panel</h3>
+          {/* <h3>Debug Panel</h3> */}
           <div className="debug-section">
             <h4>Category Biases</h4>
             <p className="debug-hint">Adjust weights to see real-time changes in article sorting</p>

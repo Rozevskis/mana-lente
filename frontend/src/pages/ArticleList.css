@@ -15,7 +15,8 @@
   overflow-y: auto;
   position: sticky;
   top: 1rem;
-  max-height: calc(100vh - 2rem);
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .debug-panel h3 {
@@ -47,7 +48,6 @@
 /* Article list styles */
 .article-list {
   flex: 1;
-  max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
   display: flex;
@@ -181,9 +181,9 @@
 }
 
 /* When debug panel is active, adjust article list */
-.with-debug-panel .article-list {
+/* .with-debug-panel .article-list {
   max-width: 1000px;
-}
+} */
 
 .article-card {
   background: white;
