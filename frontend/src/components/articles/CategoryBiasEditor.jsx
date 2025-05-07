@@ -5,6 +5,7 @@ import "./CategoryBiasEditor.css";
 const CategoryBiasEditor = ({ 
   initialBiases = {}, 
   onBiasesChange = () => {}, 
+  onSaveComplete = null,
   editable = true,
   showSaveButton = true,
   className = "" 
@@ -16,7 +17,10 @@ const CategoryBiasEditor = ({
     setBiases(initialBiases);
   }, [initialBiases]);
 
+  // When user moves a slider, update the bias value
   const handleBiasChange = (category, value) => {
+    // Clamp values between 0.1-0.9
+    // Don't want extremes (0 or 1) as they cause weird sorting results
     const newBiases = {
       ...biases,
       [category]: Math.max(0.1, Math.min(0.9, parseFloat(value))),
@@ -40,10 +44,16 @@ const CategoryBiasEditor = ({
         }
       );
       
-      // Update biases with those returned from the server
+      // Use whatever the server sends back (might have sanitized values)
       const updatedBiases = response.data.categoryBiases;
       setBiases(updatedBiases);
       onBiasesChange(updatedBiases);
+      
+      // Let other components know saving is done
+      // (fixes that sync bug between dashboard and article list)
+      if (onSaveComplete) {
+        onSaveComplete(updatedBiases);
+      }
       return true;
     } catch (error) {
       console.error("Failed to save biases:", error);
