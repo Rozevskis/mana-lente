@@ -6,13 +6,22 @@ export const categoryWeights = (categories) => {
 };
 
 export const scoreArticle = (article, userBiases) => {
-  if (!article.categories || article.categories.length === 0 || !userBiases) {
-    return 0;
+  // Check if article has no categories or empty categories array
+  if (!article.categories || 
+      article.categories.length === 0 || 
+      (Array.isArray(article.categories) && article.categories.length === 0) || 
+      !userBiases) {
+    return 0.5; // Default value of 0.5 for articles without categories
   }
 
   const categories = Array.isArray(article.categories) 
     ? article.categories 
     : Array.from(article.categories);
+  
+  // If categories array is empty after conversion, return default value
+  if (categories.length === 0) {
+    return 0.5;
+  }
   
   const weights = categoryWeights(categories);
 
