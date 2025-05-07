@@ -1,15 +1,17 @@
+// Determine weight of each category based on position
+// Using a decay factor to make first categories more important
 export const categoryWeights = (categories) => {
+  // Decay of 0.5 felt right after testing
   const decay = 0.5;
   const rawWeights = categories.map((_, i) => Math.pow(decay, i));
   const sum = rawWeights.reduce((a, b) => a + b, 0);
-  return rawWeights.map(w => w / sum); // normalized weights
+  return rawWeights.map(w => w / sum); // normalize to sum=1
 };
 
 export const scoreArticle = (article, userBiases) => {
-  // Check if article has no categories or empty categories array
+  // No categories or biases? Just use middle value (0.5)
   if (!article.categories || 
       article.categories.length === 0 || 
-      (Array.isArray(article.categories) && article.categories.length === 0) || 
       !userBiases) {
     return 0.5; // Default value of 0.5 for articles without categories
   }
@@ -36,7 +38,7 @@ export const sortArticlesByScore = (articles, userBiases) => {
     return articles;
   }
 
-  // Calculate scores for all articles
+  // Add scores to each article based on user's bias preferences
   const articlesWithScores = articles.map(article => ({
     ...article,
     score: scoreArticle(article, userBiases)
