@@ -15,6 +15,19 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    
+  tests:
+    build: ./tests
+    container_name: bias_tests
+    depends_on:
+      - backend
+    environment:
+      - API_URL=http://backend:3000
+    volumes:
+      - ./tests:/app
+      - /app/node_modules
+    networks:
+      - app-network
 
   frontend:
     build: ./frontend
