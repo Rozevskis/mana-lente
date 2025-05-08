@@ -264,7 +264,11 @@ const ArticleList = () => {
           ) : (
             <div className="articles-grid">
               {articles.map((article) => (
-                <div key={article.id} className="article-card">
+                <div 
+                  key={article.id} 
+                  className="article-card"
+                  onClick={() => window.open(article.link, '_blank', 'noopener,noreferrer')}
+                >
                   {article.image && (
                     <div className="article-image">
                       <img src={article.image} alt={article.title} />
@@ -274,7 +278,14 @@ const ArticleList = () => {
                     {article.categories && article.categories.length > 0 && (
                       <div className="article-categories">
                         {article.categories.map((category) => (
-                          <span key={category} className="category-bubble">
+                          <span 
+                            key={category} 
+                            className="category-bubble"
+                            onClick={(e) => {
+                              e.stopPropagation(); // prevent opening the article
+                              handleCategorySelect(category);
+                            }}
+                          >
                             {category}
                           </span>
                         ))}
@@ -296,14 +307,15 @@ const ArticleList = () => {
                           day: "numeric",
                         })}
                       </span>
-                      <a
-                        href={article.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
                         className="article-link"
+                        onClick={(e) => {
+                          e.stopPropagation(); // prevent duplicate opening
+                          window.open(article.link, '_blank', 'noopener,noreferrer');
+                        }}
                       >
                         Lasīt vairāk
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </div>

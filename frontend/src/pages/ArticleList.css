@@ -238,9 +238,11 @@
 
 .article-card {
   background: white;
-  border-bottom: 1px solid #e5e5e5;
   flex: 1 1 calc(33.333% - 1.5rem);
   min-width: 300px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  overflow: hidden;
 }
 
 .article-card:hover {
@@ -288,12 +290,25 @@
 }
 
 .category-bubble {
-  background-color: #f0f0f0;
-  color: #666;
-  padding: 0.25rem 0.75rem;
+  background-color: #f1f5f9;
+  color: #4a5568;
+  padding: 0.25rem 0.5rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
   border-radius: 1rem;
   font-size: 0.75rem;
   white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.category-bubble:hover {
+  background-color: #e2e8f0;
+  color: #2d3748;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
 }
 
 .article-meta {
@@ -310,15 +325,22 @@
 
 .article-link {
   color: #007bff;
-  text-decoration: none;
+  background-color: transparent;
+  border: none;
   font-weight: 500;
   text-transform: uppercase;
   font-size: 0.875rem;
   letter-spacing: 0.25px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .article-link:hover {
-  text-decoration: underline;
+  background-color: #f0f7ff;
+  color: #0056b3;
+  text-decoration: none;
 }
 
 .article-score {
