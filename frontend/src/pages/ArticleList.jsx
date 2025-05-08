@@ -252,7 +252,7 @@ const ArticleList = () => {
               className={`category-button ${selectedCategory === category ? 'active' : ''}`}
               onClick={() => handleCategorySelect(category)}
             >
-              {category.length > 20 ? category.substring(0, 18) + '...' : category}
+              {category.length > 24 ? category.substring(0, 22) + '...' : category}
             </button>
           ))}
         </div>

@@ -10,7 +10,7 @@ function Home() {
 
   return (
     <div className="home">
-      <h1>Welcome to the News Portal!</h1>
+      <h1>Welcome to ManaLente!</h1>
       <p>You are logged in successfully.</p>
     </div>
   );

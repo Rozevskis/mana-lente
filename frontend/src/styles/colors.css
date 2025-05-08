@@ -1,52 +1,53 @@
 :root {
   /* Primary colors */
-  --color-primary: #007bff;
-  --color-primary-light: #0056b3;
-  --color-primary-dark: #004085;
-  --color-primary-bg: #f0f7ff;
-  --color-primary-border: #bfdfff;
+  --color-primary: #9ac1f0; /* Soft Blue */
+  --color-primary-light: #f6c445; /* Mint Green for button/link hover */
+  --color-primary-dark: #7d9ed0;
+  --color-primary-bg: #f8f9ff;
+  --color-primary-border: #d0e0ff;
   
-  /* Secondary colors */
-  --color-secondary: #6c757d;
-  --color-secondary-light: #adb5bd;
-  --color-secondary-dark: #495057;
+  /* Accent colors */
+  --color-accent-success: #72fa93; /* Mint Green */
+  --color-accent-warning: #f6c445; /* Gold */
+  --color-accent-danger: #e45f2b; /* Orange-Red */
+  --color-accent-info: #9ac1f0; /* Soft Blue */
+  --color-accent-special: #a0e548; /* Bright Green */
   
   /* Neutral colors */
   --color-white: #ffffff;
-  --color-black: #000000;
+  --color-black: #1a1a1a;
   --color-text: #1a1a1a;
   --color-text-secondary: #4a4a4a;
-  --color-text-muted: #6c757d;
+  --color-text-muted: #7a7a7a;
   
   /* Background colors */
   --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f8f9fa;
-  --color-bg-tertiary: #e9ecef;
+  --color-bg-secondary: #f8f9ff;
+  --color-bg-tertiary: #f0f1f5;
   
   /* Border colors */
   --color-border: #e5e5e5;
   --color-border-light: #f1f1f1;
-  --color-border-dark: #cbd5e0;
+  --color-border-dark: #a0e548; /* Bright Green accent border */
   
   /* Status colors */
-  --color-success: #28a745;
-  --color-warning: #ffc107;
-  --color-danger: #dc3545;
-  --color-info: #17a2b8;
+  --color-success: #72fa93;
+  --color-warning: #f6c445;
+  --color-danger: #e45f2b;
+  --color-info: #9ac1f0;
   
-  /* Category/Tag colors */
-  --color-tag-bg: rgba(241, 245, 249, 0.85);
-  --color-tag-text: #1a202c;
-  --color-tag-hover-bg: #e2e8f0;
-  --color-tag-hover-text: #2d3748;
+  /* Tag colors */
+  --color-tag-bg: rgba(246, 196, 69, 0.6);
+  --color-tag-text: #f8f9ff;
+  --color-tag-hover-bg: rgba(246, 196, 69, 0.8); /* Gold for tag/category hover */
+  --color-tag-hover-text: #f0f1f5;
   
   /* Score indicator colors */
-  --color-score-bg: #e6f7ff;
-  --color-score-text: #0066cc;
-  --color-score-border: #bfdfff;
+  --color-score-bg: #f8f9ff;
+  --color-score-text: #9ac1f0; /* Mint Green for score border */
   
   /* Shadow */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
 }
