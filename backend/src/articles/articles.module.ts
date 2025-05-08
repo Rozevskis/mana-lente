@@ -9,7 +9,10 @@ import { OpenaiCategorizationService } from './openai-categorization.service';
 import { RssScraperService } from './rss-scraper.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Article]), ConfigModule],
+  imports: [
+    TypeOrmModule.forFeature([Article]), 
+    ConfigModule,
+  ],
   controllers: [ArticlesController],
   providers: [
     ArticlesService,

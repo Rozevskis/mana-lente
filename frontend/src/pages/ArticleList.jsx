@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getSortedArticles } from "../services/articleService";
-import { getUserBiases, saveUserBiases } from "../services/userService";
+import { getUserBiases, saveUserBiases, updateUserBiases } from "../services/userService";
 import { adjustBiasesFromInteraction } from "../services/biasService";
 import { useAuth } from "../contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
@@ -175,11 +175,27 @@ const ArticleList = () => {
 
   // Handle real-time bias changes in debug mode
   const handleBiasesUpdate = async (newBiases) => {
+    console.log("Updating biases to:", newBiases);
     setUserBiases(newBiases);
     
+    // If authenticated, save to backend database
+    if (isAuthenticated) {
+      try {
+        console.log("Saving biases to backend for authenticated user");
+        const updatedUser = await updateUserBiases(newBiases);
+        console.log("Successfully updated user biases in backend:", updatedUser);
+      } catch (error) {
+        console.error("Failed to update user biases in backend:", error);
+      }
+    } 
     // If not authenticated, save to local storage
-    if (!isAuthenticated) {
-      saveUserBiases(newBiases);
+    else {
+      const saveSuccess = saveUserBiases(newBiases);
+      console.log("Saved biases to local storage:", saveSuccess ? "success" : "failed");
+      
+      // Verify the biases were saved correctly
+      const savedBiases = getUserBiases();
+      console.log("Verification - Retrieved biases from storage:", savedBiases);
     }
     
     // Re-fetch articles with new biases from backend
@@ -210,6 +226,7 @@ const ArticleList = () => {
     
     // Use the bias service to calculate updated biases
     const updatedBiases = adjustBiasesFromInteraction(articleCategories, userBiases);
+    console.log("Adjusting biases from article click:", updatedBiases);
     
     // Update biases and refresh articles
     handleBiasesUpdate(updatedBiases);

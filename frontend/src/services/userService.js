@@ -17,7 +17,9 @@ export const getUserBiases = () => {
     }
     
     // Parse and return the category biases
-    return JSON.parse(biasesData);
+    const parsedBiases = JSON.parse(biasesData);
+    console.log("Retrieved biases from localStorage:", parsedBiases);
+    return parsedBiases;
   } catch (error) {
     console.error("Error accessing category biases:", error);
     return null;
@@ -34,7 +36,16 @@ export const saveUserBiases = (biases) => {
       console.error("Cannot save empty biases");
       return false;
     }
-    localStorage.setItem(BIASES_STORAGE_KEY, JSON.stringify(biases));
+    
+    const biasesString = JSON.stringify(biases);
+    localStorage.setItem(BIASES_STORAGE_KEY, biasesString);
+    console.log("Saved biases to localStorage:", biases);
+    
+    const savedData = localStorage.getItem(BIASES_STORAGE_KEY);
+    if (savedData !== biasesString) {
+      console.error("Verification failed: Saved data doesn't match what was intended to save");
+      return false;
+    }
     
     return true;
   } catch (error) {
