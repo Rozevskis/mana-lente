@@ -17,7 +17,7 @@
 
 .bias-label {
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size:1.25rem;
   color: #333;
 }
 
@@ -70,7 +70,7 @@
 .bias-value {
   width: 2rem;
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 1.25rem;
   color: #666;
 }
 
@@ -121,11 +121,12 @@
 }
 
 .sidebar-editor .bias-label {
-  font-size: 0.75rem;
+  font-size: 1rem;
+  text-align: left;
 }
 
 .sidebar-editor .bias-value {
-  font-size: 0.7rem;
+  font-size: 1rem;
 }
 
 .sidebar-editor .save-button {

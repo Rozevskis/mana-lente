@@ -18,10 +18,7 @@ const CategoryBiasEditor = ({
     setBiases(initialBiases);
   }, [initialBiases]);
 
-  // When user moves a slider, update the bias value
   const handleBiasChange = (category, value) => {
-    // Clamp values between 0.1-0.9
-    // Don't want extremes (0 or 1) as they cause weird sorting results
     const newBiases = {
       ...biases,
       [category]: Math.max(0.1, Math.min(0.9, parseFloat(value))),
@@ -75,7 +72,11 @@ const CategoryBiasEditor = ({
       <div className="biases-container">
         {Object.entries(biases).map(([category, value]) => (
           <div key={category} className="bias-item">
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div className="bias-label">{category}</div>
+            <div className="bias-value">{value.toFixed(3)}</div>
+            </div>
+            
             <div className="bias-control">
               {editable ? (
                 <input
@@ -90,11 +91,11 @@ const CategoryBiasEditor = ({
                 <div className="bias-bar-container">
                   <div 
                     className="bias-bar" 
-                    style={{ width: `${value * 100}%` }}
+                    style={{ width: `${(value - 0.1) / 0.8 * 100}%` }}
                   ></div>
                 </div>
               )}
-              <div className="bias-value">{value.toFixed(1)}</div>
+              
             </div>
           </div>
         ))}
