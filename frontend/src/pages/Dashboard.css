@@ -5,7 +5,7 @@
 }
 
 .dashboard h1 {
-  color: #333;
+  color: var(--color-text);
   margin-bottom: 2rem;
 }
 
@@ -16,18 +16,18 @@
 }
 
 .dashboard-card {
-  background-color: white;
+  background-color: var(--color-bg-primary);
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .dashboard-card h2 {
-  color: #333;
+  color: var(--color-text);
   margin-bottom: 1rem;
 }
 
 .dashboard-card p {
-  color: #666;
+  color: var(--color-text-muted);
   margin-bottom: 0.5rem;
 }

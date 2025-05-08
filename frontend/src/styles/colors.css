@@ -1,0 +1,52 @@
+:root {
+  /* Primary colors */
+  --color-primary: #007bff;
+  --color-primary-light: #0056b3;
+  --color-primary-dark: #004085;
+  --color-primary-bg: #f0f7ff;
+  --color-primary-border: #bfdfff;
+  
+  /* Secondary colors */
+  --color-secondary: #6c757d;
+  --color-secondary-light: #adb5bd;
+  --color-secondary-dark: #495057;
+  
+  /* Neutral colors */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-muted: #6c757d;
+  
+  /* Background colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-tertiary: #e9ecef;
+  
+  /* Border colors */
+  --color-border: #e5e5e5;
+  --color-border-light: #f1f1f1;
+  --color-border-dark: #cbd5e0;
+  
+  /* Status colors */
+  --color-success: #28a745;
+  --color-warning: #ffc107;
+  --color-danger: #dc3545;
+  --color-info: #17a2b8;
+  
+  /* Category/Tag colors */
+  --color-tag-bg: rgba(241, 245, 249, 0.85);
+  --color-tag-text: #1a202c;
+  --color-tag-hover-bg: #e2e8f0;
+  --color-tag-hover-text: #2d3748;
+  
+  /* Score indicator colors */
+  --color-score-bg: #e6f7ff;
+  --color-score-text: #0066cc;
+  --color-score-border: #bfdfff;
+  
+  /* Shadow */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}

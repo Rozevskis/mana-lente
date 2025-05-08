@@ -15,8 +15,8 @@
 /* Debug panel styles */
 .debug-panel {
   flex: 0 0 300px;
-  background-color: #f8f9fa;
-  border-right: 1px solid #e2e8f0;
+  background-color: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border-dark);
   padding: 1rem;
   overflow-y: auto;
   position: sticky;
@@ -29,9 +29,9 @@
   margin-top: 0;
   font-size: 1.2rem;
   font-weight: 600;
-  color: #4a5568;
+  color: var(--color-secondary-dark);
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border-dark);
 }
 
 .debug-section {
@@ -42,19 +42,19 @@
   font-size: 1rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: #4a5568;
+  color: var(--color-secondary-dark);
 }
 
 .debug-hint {
   font-size: 0.75rem;
-  color: #718096;
+  color: var(--color-text-muted);
   margin-bottom: 0.75rem;
 }
 
 /* Category filter styles */
 .category-filter {
   width: 100%;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border-dark);
   margin-bottom: 1rem;
 }
 
@@ -66,34 +66,34 @@
 
 .category-button {
   padding: 10px 30px;
-  background-color: rgb(242, 242, 242);
+  background-color: var(--color-bg-tertiary);
   font-size: 14px;
   border-radius: 0;
   white-space: nowrap;
   cursor: pointer;
   width: fit-content;
   transition: all 0.2s ease;
-  color: black;
+  color: var(--color-text);
 }
 .category-buttons :first-child {
   font-weight: bold;
-  background-color: white;
+  background-color: var(--color-white);
 }
 
 
 .category-button:hover {
-  background-color: #e2e8f0;
+  background-color: var(--color-border-dark);
 }
 .category-button:focus {
-  background-color: #e2e8f0;
+  background-color: var(--color-border-dark);
   outline: none;
   box-shadow: none;
 }
 
 .category-button.active {
   border: none;
-  background-color: #e2e8f0;
-  border-bottom: 2px solid #3b82f6;
+  background-color: var(--color-border-dark);
+  border-bottom: 2px solid var(--color-primary);
 }
 
 /* Article list styles */
@@ -137,7 +137,7 @@
 .article-header h1 {
   margin: 0;
   font-size: 1.75rem;
-  color: #1a1a1a;
+  color: var(--color-text);
 }
 
 .search-form {
@@ -148,15 +148,15 @@
 
 .search-input {
   padding: 0.5rem 1rem;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
   border-right: none;
   flex: 1;
   min-width: 250px;
 }
 
 .search-button {
-  background-color: #3b82f6;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-white);
   border: none;
   border-radius: 0;
   padding: 0.5rem 1rem;
@@ -165,7 +165,7 @@
 }
 
 .search-button:hover {
-  background-color: #2563eb;
+  background-color: var(--color-primary-light);
 }
 
 
@@ -173,8 +173,8 @@
   width: 100%;
   padding: 2rem;
   text-align: center;
-  color: #666;
-  background-color: #f8f9fa;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-secondary);
   border-radius: 8px;
   font-size: 1.1rem;
 }
@@ -191,9 +191,9 @@
 }
 
 .pagination-button {
-  background-color: white;
-  border: 1px solid #e5e5e5;
-  color: #4a5568;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  color: var(--color-secondary-dark);
   padding: 0.5rem 0.75rem;
   border-radius: 4px;
   cursor: pointer;
@@ -201,8 +201,8 @@
 }
 
 .pagination-button:hover:not(:disabled) {
-  background-color: #f7fafc;
-  border-color: #cbd5e0;
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-border-dark);
 }
 
 .pagination-button:disabled {
@@ -212,7 +212,7 @@
 
 .pagination-info {
   padding: 0 1rem;
-  color: #4a5568;
+  color: var(--color-secondary-dark);
   font-size: 0.875rem;
   text-wrap: nowrap;
 }
@@ -235,7 +235,7 @@
 } */
 
 .article-card {
-  background: white;
+  background: var(--color-bg-primary);
   flex: 1 1 calc(33.333% - 1.5rem);
   min-width: 300px;
   transition: all 0.2s ease;
@@ -269,13 +269,13 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
-  color: #1a1a1a;
+  color: var(--color-text);
   line-height: 1;
   text-align: left;
 }
 
 .article-description {
-  color: #4a4a4a;
+  color: var(--color-text-secondary);
   text-align: left;
   margin-bottom: 1rem;
   line-height: 1.5;
@@ -286,30 +286,30 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   position: absolute;
-  bottom: 7px;
+  bottom: 10px;
   left: 10px;
   z-index: 2;
 }
 
 .category-bubble {
-  background-color: rgba(241, 245, 249, 0.85);
-  color: #1a202c;
-  padding: 0.25rem 0.5rem;
+  background-color: var(--color-tag-bg);
+  color: var(--color-tag-text);
+  padding: 0.15rem 0.75rem;
   display: inline-block;
   font-size: 0.75rem;
-  line-height: 0.75;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
   backdrop-filter: blur(2px);
+  margin-bottom: 5px;
 }
 
 .category-bubble:hover {
-  background-color: #e2e8f0;
-  color: #2d3748;
-  border-color: #cbd5e0;
+  background-color: var(--color-tag-hover-bg);
+  color: var(--color-tag-hover-text);
+  border-color: var(--color-border-dark);
   transform: translateY(-1px);
 }
 
@@ -318,7 +318,7 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 1rem;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 .article-date {
@@ -326,7 +326,7 @@
 }
 
 .article-link {
-  color: #007bff;
+  color: var(--color-primary);
   background-color: transparent;
   border: none;
   font-weight: 500;
@@ -341,21 +341,21 @@
 }
 
 .article-link:hover {
-  background-color: #f0f7ff;
-  color: #0056b3;
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary-light);
   text-decoration: none;
 }
 
 .article-score {
   display: inline-block;
-  background-color: #e6f7ff;
-  color: #0066cc;
+  background-color: var(--color-score-bg);
+  color: var(--color-score-text);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  border: 1px solid #bfdfff;
+  border: 1px solid var(--color-score-border);
 }
 
 .loading,
@@ -366,7 +366,7 @@
 }
 
 .error {
-  color: #dc3545;
+  color: var(--color-danger);
 }
 
 @media (max-width: 768px) {
