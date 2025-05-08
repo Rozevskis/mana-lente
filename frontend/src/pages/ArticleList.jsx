@@ -308,25 +308,25 @@ const ArticleList = () => {
                   {article.image && (
                     <div className="article-image">
                       <img src={article.image} alt={article.title} />
+                      {article.categories && article.categories.length > 0 && (
+                        <div className="article-categories">
+                          {article.categories.map((category) => (
+                            <span 
+                              key={category} 
+                              className="category-bubble"
+                              onClick={(e) => {
+                                e.stopPropagation(); // prevent opening the article
+                                handleCategorySelect(category);
+                              }}
+                            >
+                              {category}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="article-content">
-                    {article.categories && article.categories.length > 0 && (
-                      <div className="article-categories">
-                        {article.categories.map((category) => (
-                          <span 
-                            key={category} 
-                            className="category-bubble"
-                            onClick={(e) => {
-                              e.stopPropagation(); // prevent opening the article
-                              handleCategorySelect(category);
-                            }}
-                          >
-                            {category}
-                          </span>
-                        ))}
-                      </div>
-                    )}
                     <h2 className="article-title">{article.title}</h2>
                     <p className="article-description">{article.description}</p>
                 {/* Display score only when debug mode is enabled */}
