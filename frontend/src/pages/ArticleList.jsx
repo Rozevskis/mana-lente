@@ -4,7 +4,13 @@ import { getUserBiases, saveUserBiases, updateUserBiases } from "../services/use
 import { adjustBiasesFromInteraction } from "../services/biasService";
 import { useAuth } from "../contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
-import CategoryBiasEditor from "../components/articles/CategoryBiasEditor";
+import { 
+  ArticleCard, 
+  CategoryFilter, 
+  DebugPanel, 
+  Pagination, 
+  SearchBar 
+} from "../components/articles/ArticleListComponents";
 import "./ArticleList.css";
 
 // parse default biases from environment variable
@@ -237,168 +243,54 @@ const ArticleList = () => {
 
   return (
     <div className={`article-list-container ${isDebugMode ? 'with-debug-panel' : ''}`}>
-      {/* Category filter buttons */}
-      <div className="category-filter">
-        <div className="category-buttons">
-          <button 
-            className={`category-button ${selectedCategory === null ? 'active' : ''}`}
-            onClick={() => handleCategorySelect(null)}
-          >
-            All Categories
-          </button>
-          {articleCategories.map((category) => (
-            <button
-              key={category}
-              className={`category-button ${selectedCategory === category ? 'active' : ''}`}
-              onClick={() => handleCategorySelect(category)}
-            >
-              {category.length > 24 ? category.substring(0, 22) + '...' : category}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Category Filter Component */}
+      <CategoryFilter 
+        categories={articleCategories} 
+        selectedCategory={selectedCategory} 
+        onCategorySelect={handleCategorySelect} 
+      />
       
       <div className="content-area">
+        {/* Debug Panel Component */}
         {isDebugMode && userBiases && (
-          <div className="debug-panel">
-            <div className="debug-section">
-              <h4>Category Biases</h4>
-              <p className="debug-hint">Adjust weights to see real-time changes in article sorting</p>
-              <CategoryBiasEditor
-                initialBiases={userBiases}
-                onBiasesChange={handleBiasesUpdate}
-                editable={true}
-                className="sidebar-editor"
-              />
-            </div>
-          </div>
+          <DebugPanel 
+            userBiases={userBiases} 
+            onBiasesChange={handleBiasesUpdate} 
+          />
         )}
 
         <div className="article-list">
           <div className="article-header">
             <h1>Jaunākās ziņas</h1>
-            <form onSubmit={handleSearch} className="search-form">
-              <input
-                type="text"
-                placeholder="Meklēt rakstus..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                className="search-input"
-              />
-              <button type="submit" className="search-button">Meklēt</button>
-            </form>
+            {/* Search Bar Component */}
+            <SearchBar 
+              searchInput={searchInput} 
+              setSearchInput={setSearchInput} 
+              handleSearch={handleSearch} 
+            />
           </div>
+          
           {articles.length === 0 ? (
             <div className="no-articles">Nav atrasts neviens raksts. Mēģiniet pielietot citus meklēšanas parametrus.</div>
           ) : (
             <div className="articles-grid">
               {articles.map((article) => (
-                <div 
-                  key={article.id} 
-                  className="article-card"
-                  onClick={() => {
-                    // adjust biases based on article categories when clicked
-                    if (isDebugMode && article.categories) {
-                      adjustBiasesFromArticleClick(article.categories);
-                    }
-                    // open the article in a new tab
-                    window.open(article.link, '_blank', 'noopener,noreferrer');
-                  }}
-                >
-                  {article.image && (
-                    <div className="article-image">
-                      <img src={article.image} alt={article.title} />
-                      {article.categories && article.categories.length > 0 && (
-                        <div className="article-categories">
-                          {article.categories.map((category) => (
-                            <span 
-                              key={category} 
-                              className="category-bubble"
-                              onClick={(e) => {
-                                e.stopPropagation(); // prevent opening the article
-                                handleCategorySelect(category);
-                              }}
-                            >
-                              {category}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <div className="article-content">
-                    <h2 className="article-title">{article.title}</h2>
-                    <p className="article-description">{article.description}</p>
-                {/* Display score only when debug mode is enabled */}
-                    {article.score !== undefined && isDebugMode && (
-                      <div className="article-score">
-                        Score: {article.score.toFixed(3)}
-                      </div>
-                    )}
-                    <div className="article-meta">
-                      <span className="article-date">
-                        {new Date(article.publishedAt).toLocaleDateString("lv-LV", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
-                      </span>
-                      <button
-                        className="article-link"
-                        onClick={(e) => {
-                          e.stopPropagation(); // prevent duplicate opening
-                          window.open(article.link, '_blank', 'noopener,noreferrer');
-                        }}
-                      >
-                        Lasīt vairāk
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <ArticleCard 
+                  key={article.id}
+                  article={article}
+                  isDebugMode={isDebugMode}
+                  onCategorySelect={handleCategorySelect}
+                  adjustBiasesFromArticleClick={adjustBiasesFromArticleClick}
+                />
               ))}
             </div>
           )}
 
-        {/* Pagination controls */}
-          {pagination.totalPages > 1 && (
-            <div className="pagination">
-              <button 
-                className="pagination-button" 
-                onClick={() => handlePageChange(1)} 
-                disabled={pagination.page === 1}
-              >
-                &laquo;
-              </button>
-              
-              <button 
-                className="pagination-button" 
-                onClick={() => handlePageChange(pagination.page - 1)} 
-                disabled={pagination.page === 1}
-              >
-                &lsaquo;
-              </button>
-              
-              <div className="pagination-info">
-                Page {pagination.page} of {pagination.totalPages}
-              </div>
-              
-              <button 
-                className="pagination-button" 
-                onClick={() => handlePageChange(pagination.page + 1)} 
-                disabled={pagination.page === pagination.totalPages}
-              >
-                &rsaquo;
-              </button>
-              
-              <button 
-                className="pagination-button" 
-                onClick={() => handlePageChange(pagination.totalPages)} 
-                disabled={pagination.page === pagination.totalPages}
-              >
-                &raquo;
-              </button>
-            </div>
-          )}
+          {/* Pagination Component */}
+          <Pagination 
+            pagination={pagination} 
+            onPageChange={handlePageChange} 
+          />
         </div>
       </div>
     </div>
