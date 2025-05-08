@@ -6,8 +6,8 @@
 // Constants for bias adjustments
 const BIAS_INCREASE = 0.01;
 const BIAS_DECREASE = 0.001;
-const MIN_BIAS = 0;
-const MAX_BIAS = 1;
+const MIN_BIAS = 0.1;
+const MAX_BIAS = 0.9;
 
 /**
  * Adjusts user biases based on article categories they interacted with
