@@ -33,6 +33,7 @@ export function AuthProvider({ children }) {
         .catch((error) => {
           console.error("Error fetching user data:", error);
           localStorage.removeItem("token");
+          localStorage.removeItem("user");
           delete axios.defaults.headers.common["Authorization"];
         })
         .finally(() => {
@@ -45,7 +46,6 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    console.log("Attempting login...");
     try {
       const response = await axios.post(`${API_URL}/auth/login`, {
         email,
@@ -55,11 +55,27 @@ export function AuthProvider({ children }) {
       const { token, user } = response.data;
       localStorage.setItem("token", token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      setCurrentUser(user);
-      return user;
+      
+      // After login, fetch complete user data including biases
+      try {
+        const userDataResponse = await axios.get(`${API_URL}/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        console.log("Complete user data fetched:", userDataResponse.data);
+        // Set the complete user data with biases
+        setCurrentUser(userDataResponse.data);
+        return userDataResponse.data;
+      } catch (userDataError) {
+        console.error("Error fetching complete user data:", userDataError);
+        // Fall back to using the basic user data from login
+        setCurrentUser(user);
+        return user;
+      }
     } catch (error) {
       console.error("Login error:", error);
-      throw new Error(error.response?.data?.message || "Login failed");
+      throw error;
     }
   };
 
@@ -86,6 +102,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     console.log("Logging out...");
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     delete axios.defaults.headers.common["Authorization"];
     setCurrentUser(null);
   };

@@ -33,14 +33,24 @@ const ArticleList = () => {
         // Get user biases for the debug editor panel only
         // The backend will handle determining which biases to use
         let biases = null;
-        if (isAuthenticated && currentUser) {
+        // If authenticated user has biases, use those
+        if (isAuthenticated && currentUser && currentUser.categoryBiases) {
+          console.log("Using authenticated user biases:", currentUser.categoryBiases);
           biases = currentUser.categoryBiases;
         } else {
-          biases = getUserBiases();
+          // Otherwise use biases from localStorage
+          const localBiases = getUserBiases();
+          console.log("Using local storage biases:", localBiases);
+          biases = localBiases;
         }
         
-        // Save biases for the debug editor panel
-        setUserBiases(biases);
+        // Save biases for the debug editor panel - only if we have biases to save
+        if (biases) {
+          console.log("Setting user biases for debug panel:", biases);
+          setUserBiases(biases);
+        } else {
+          console.log("No biases available to set");
+        }
         
         // Get sorted articles from backend
         const response = await getSortedArticles({
