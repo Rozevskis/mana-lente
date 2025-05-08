@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getSortedArticles } from "../services/articleService";
 import { getUserBiases, saveUserBiases } from "../services/userService";
+import { adjustBiasesFromInteraction } from "../services/biasService";
 import { useAuth } from "../contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import CategoryBiasEditor from "../components/articles/CategoryBiasEditor";
@@ -207,28 +208,10 @@ const ArticleList = () => {
   const adjustBiasesFromArticleClick = (articleCategories) => {
     if (!articleCategories || articleCategories.length === 0) return;
     
-    // create a copy of current biases
-    const updatedBiases = { ...userBiases };
+    // Use the bias service to calculate updated biases
+    const updatedBiases = adjustBiasesFromInteraction(articleCategories, userBiases);
     
-    // constants for bias adjustments
-    const BIAS_INCREASE = 0.01;
-    const BIAS_DECREASE = 0.001;
-    const MIN_BIAS = 0;
-    const MAX_BIAS = 1;
-    
-    // for each category in the clicked article, increase its bias
-    articleCategories.forEach(category => {
-      if (updatedBiases[category] !== undefined) {
-        updatedBiases[category] = Math.min(MAX_BIAS, updatedBiases[category] + BIAS_INCREASE);
-      }
-    });
-    
-    //for all other categories, slightly decrease their bias
-    Object.keys(updatedBiases).forEach(category => {
-      if (!articleCategories.includes(category)) {
-        updatedBiases[category] = Math.max(MIN_BIAS, updatedBiases[category] - BIAS_DECREASE);
-      }
-    });
+    // Update biases and refresh articles
     handleBiasesUpdate(updatedBiases);
   };
 
