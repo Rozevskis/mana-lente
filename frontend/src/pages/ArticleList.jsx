@@ -202,6 +202,35 @@ const ArticleList = () => {
       console.error("Error updating articles with new biases:", err);
     }
   };
+  
+  // The algo that acctually adjusts the biases based on the clicked article
+  const adjustBiasesFromArticleClick = (articleCategories) => {
+    if (!articleCategories || articleCategories.length === 0) return;
+    
+    // create a copy of current biases
+    const updatedBiases = { ...userBiases };
+    
+    // constants for bias adjustments
+    const BIAS_INCREASE = 0.01;
+    const BIAS_DECREASE = 0.001;
+    const MIN_BIAS = 0;
+    const MAX_BIAS = 1;
+    
+    // for each category in the clicked article, increase its bias
+    articleCategories.forEach(category => {
+      if (updatedBiases[category] !== undefined) {
+        updatedBiases[category] = Math.min(MAX_BIAS, updatedBiases[category] + BIAS_INCREASE);
+      }
+    });
+    
+    //for all other categories, slightly decrease their bias
+    Object.keys(updatedBiases).forEach(category => {
+      if (!articleCategories.includes(category)) {
+        updatedBiases[category] = Math.max(MIN_BIAS, updatedBiases[category] - BIAS_DECREASE);
+      }
+    });
+    handleBiasesUpdate(updatedBiases);
+  };
 
   if (loading) return <div className="loading">Loading articles...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -267,7 +296,14 @@ const ArticleList = () => {
                 <div 
                   key={article.id} 
                   className="article-card"
-                  onClick={() => window.open(article.link, '_blank', 'noopener,noreferrer')}
+                  onClick={() => {
+                    // adjust biases based on article categories when clicked
+                    if (isDebugMode && article.categories) {
+                      adjustBiasesFromArticleClick(article.categories);
+                    }
+                    // open the article in a new tab
+                    window.open(article.link, '_blank', 'noopener,noreferrer');
+                  }}
                 >
                   {article.image && (
                     <div className="article-image">
