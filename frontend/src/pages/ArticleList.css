@@ -1,9 +1,15 @@
 /* Container for article list and debug panel */
 .article-list-container {
   display: flex;
+  flex-direction: column;
   max-width: 1400px;
   margin: 0 auto;
   min-height: calc(100vh - 120px);
+}
+
+.content-area {
+  display: flex;
+  flex: 1;
 }
 
 /* Debug panel styles */
@@ -43,6 +49,51 @@
   font-size: 0.75rem;
   color: #718096;
   margin-bottom: 0.75rem;
+}
+
+/* Category filter styles */
+.category-filter {
+  width: 100%;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  padding-bottom: 0.25rem;
+}
+
+.category-button {
+  padding: 10px 30px;
+  background-color: rgb(242, 242, 242);
+  font-size: 14px;
+  border-radius: 0;
+  white-space: nowrap;
+  cursor: pointer;
+  width: fit-content;
+  transition: all 0.2s ease;
+  color: black;
+}
+.category-buttons :first-child {
+  font-weight: bold;
+  background-color: white;
+}
+
+
+.category-button:hover {
+  background-color: #e2e8f0;
+}
+.category-button:focus {
+  background-color: #e2e8f0;
+  outline: none;
+  box-shadow: none;
+}
+
+.category-button.active {
+  border: none;
+  background-color: #e2e8f0;
+  border-bottom: 2px solid #3b82f6;
 }
 
 /* Article list styles */

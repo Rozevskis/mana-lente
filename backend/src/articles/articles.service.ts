@@ -21,17 +21,68 @@ export class ArticlesService {
     return this.repo.save(article);
   }
 
-  findAll(query: PaginateQuery): Promise<Paginated<Article>> {
+  async findAll(query: PaginateQuery): Promise<Paginated<Article>> {
+    if (query.filter && query.filter.categories) {
+      try {
+        let categoryValue = query.filter.categories;
+        if (typeof categoryValue === 'string') {
+          try {
+            categoryValue = JSON.parse(categoryValue);
+          } catch (e) {
+          }
+        }
+        
+        const categoryArray = Array.isArray(categoryValue) ? categoryValue : [categoryValue];
+        console.log('Applying category filter:', JSON.stringify(categoryArray));
+        
+        const page = Number(query.page) || 1;
+        const limit = Number(query.limit) || 20;
+        const skip = (page - 1) * limit;
+        
+        const qb = this.repo.createQueryBuilder('article');
+        qb.where('article.article_categories @> :categories', {
+          categories: JSON.stringify(categoryArray)
+        });
+        qb.orderBy('article.publishedAt', 'DESC');
+        qb.skip(skip);
+        qb.take(limit);
+        
+        const [articles, total] = await qb.getManyAndCount();
+        const totalPages = Math.ceil(total / limit);
+        
+        return {
+          data: articles,
+          meta: {
+            itemsPerPage: limit,
+            totalItems: total,
+            currentPage: page,
+            totalPages: totalPages,
+            sortBy: [['publishedAt', 'DESC'] as [string, string]],
+            searchBy: [],
+            search: '',
+            filter: {}
+          },
+          links: {
+            first: `?page=1&limit=${limit}`,
+            previous: page > 1 ? `?page=${page - 1}&limit=${limit}` : '',
+            current: `?page=${page}&limit=${limit}`,
+            next: page < totalPages ? `?page=${page + 1}&limit=${limit}` : '',
+            last: `?page=${totalPages}&limit=${limit}`
+          }
+        };
+      } catch (error) {
+        console.error('Error applying category filter:', error);
+      }
+    }
+    
     return paginate(query, this.repo, {
       sortableColumns: ['id', 'title', 'publishedAt'],
       searchableColumns: ['title', 'description'],
-      defaultSortBy: [['publishedAt', 'DESC']],
-      filterableColumns: {
-        categories: true,
-      },
+      defaultSortBy: [['publishedAt', 'DESC'] as [string, string]],
       select: ['id', 'title', 'description', 'link', 'image', 'categories', 'publishedAt'],
       maxLimit: 50,
       defaultLimit: 20,
+      filterableColumns: {}
     });
   }
 

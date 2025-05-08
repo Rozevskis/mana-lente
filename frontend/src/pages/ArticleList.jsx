@@ -16,6 +16,22 @@ try {
   console.error("Error parsing VITE_DEBUG_BIASES:", error);
 }
 
+let articleCategories = [];
+
+if (import.meta.env.VITE_ARTICLE_CATEGORIES) {
+  try {
+    const cleanedJson = import.meta.env.VITE_ARTICLE_CATEGORIES.replace(/,\s*]/g, ']');
+    articleCategories = JSON.parse(cleanedJson);
+    console.log("Categories loaded from environment:", articleCategories);
+  } catch (error) {
+    console.error("Error parsing VITE_ARTICLE_CATEGORIES:", error);
+    throw new Error("Failed to parse VITE_ARTICLE_CATEGORIES. Please fix the environment variable format.");
+  }
+} else {
+  console.error("VITE_ARTICLE_CATEGORIES is not defined in environment");
+  throw new Error("VITE_ARTICLE_CATEGORIES is not defined in environment. Please add it to your .env file.");
+}
+
 const ArticleList = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +44,7 @@ const ArticleList = () => {
   });
   const [searchParams, setSearchParams] = useSearchParams();
   const [userBiases, setUserBiases] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const { currentUser, isAuthenticated } = useAuth();
   const isDebugMode = import.meta.env.VITE_DEBUG === "true";
   // use the pre-parsed default biases to avoid parsing on every render
@@ -73,6 +90,12 @@ const ArticleList = () => {
           console.log("No biases available to set");
         }
         
+        // check if there's a category in the URL params
+        const categoryParam = searchParams.get("category");
+        if (categoryParam && !selectedCategory) {
+          setSelectedCategory(categoryParam);
+        }
+        
         // Get sorted articles from backend
         const response = await getSortedArticles({
           page,
@@ -81,6 +104,7 @@ const ArticleList = () => {
           sortBy: 'publishedAt',  // Always sort by date initially
           sortOrder: 'DESC',      // Always newest first initially
           biases: biases, // Always send biases regardless of authentication status
+          category: selectedCategory, // Send selected category if any
           debug: isDebugMode // Always pass debug flag if in debug mode
         });
         
@@ -106,7 +130,7 @@ const ArticleList = () => {
     };
 
     fetchArticles();
-  }, [currentUser, isAuthenticated, searchParams, isDebugMode, defaultBiases]);
+  }, [currentUser, isAuthenticated, searchParams, isDebugMode, defaultBiases, selectedCategory]);
 
   // Handle page change
   const handlePageChange = (newPage) => {
@@ -130,6 +154,23 @@ const ArticleList = () => {
     newParams.set("page", "1"); // Reset to page 1 on new search
     setSearchParams(newParams);
   };
+  
+  // handle category selection
+  const handleCategorySelect = (category) => {
+    // if clicking the already selected category, deselect it
+    const newCategory = category === selectedCategory ? null : category;
+    setSelectedCategory(newCategory);
+    
+    // update URL params
+    const newParams = new URLSearchParams(searchParams);
+    if (newCategory) {
+      newParams.set("category", newCategory);
+    } else {
+      newParams.delete("category");
+    }
+    newParams.set("page", "1"); // Reset to page 1 on category change
+    setSearchParams(newParams);
+  };
 
   // Handle real-time bias changes in debug mode
   const handleBiasesUpdate = async (newBiases) => {
@@ -150,6 +191,7 @@ const ArticleList = () => {
         sortBy: 'publishedAt',
         sortOrder: 'DESC',
         biases: newBiases, // Send biases to backend
+        category: selectedCategory, // Include the selected category to maintain filtering
         debug: isDebugMode // Pass debug flag
       });
       
@@ -166,131 +208,153 @@ const ArticleList = () => {
 
   return (
     <div className={`article-list-container ${isDebugMode ? 'with-debug-panel' : ''}`}>
-      {/* Debug panel sidebar for real-time bias editing */}
-      {isDebugMode && userBiases && (
-        <div className="debug-panel">
-          {/* <h3>Debug Panel</h3> */}
-          <div className="debug-section">
-            <h4>Category Biases</h4>
-            <p className="debug-hint">Adjust weights to see real-time changes in article sorting</p>
-            <CategoryBiasEditor
-              initialBiases={userBiases}
-              onBiasesChange={handleBiasesUpdate}
-              editable={true}
-              className="sidebar-editor"
-            />
-          </div>
-        </div>
-      )}
-      <div className="article-list">
-        <div className="article-header">
-          <h1>Jaunākās ziņas</h1>
-          <form onSubmit={handleSearch} className="search-form">
-            <input
-              type="text"
-              placeholder="Meklēt rakstus..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              className="search-input"
-            />
-            <button type="submit" className="search-button">Meklēt</button>
-          </form>
-        </div>
-        {articles.length === 0 ? (
-          <div className="no-articles">Nav atrasts neviens raksts. Mēģiniet pielietot citus meklēšanas parametrus.</div>
-        ) : (
-          <div className="articles-grid">
-            {articles.map((article) => (
-            <div key={article.id} className="article-card">
-              {article.image && (
-                <div className="article-image">
-                  <img src={article.image} alt={article.title} />
-                </div>
-              )}
-              <div className="article-content">
-                {article.categories && article.categories.length > 0 && (
-                  <div className="article-categories">
-                    {article.categories.map((category) => (
-                      <span key={category} className="category-bubble">
-                        {category}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <h2 className="article-title">{article.title}</h2>
-                <p className="article-description">{article.description}</p>
-                {/* Display score only when debug mode is enabled */}
-                {article.score !== undefined && isDebugMode && (
-                  <div className="article-score">
-                    Score: {article.score.toFixed(3)}
-                  </div>
-                )}
-                <div className="article-meta">
-                  <span className="article-date">
-                    {new Date(article.publishedAt).toLocaleDateString("lv-LV", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
-                  <a
-                    href={article.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="article-link"
-                  >
-                    Lasīt vairāk
-                  </a>
-                </div>
-              </div>
-            </div>
+      {/* Category filter buttons */}
+      <div className="category-filter">
+        <div className="category-buttons">
+          <button 
+            className={`category-button ${selectedCategory === null ? 'active' : ''}`}
+            onClick={() => handleCategorySelect(null)}
+          >
+            All Categories
+          </button>
+          {articleCategories.map((category) => (
+            <button
+              key={category}
+              className={`category-button ${selectedCategory === category ? 'active' : ''}`}
+              onClick={() => handleCategorySelect(category)}
+            >
+              {category.length > 20 ? category.substring(0, 18) + '...' : category}
+            </button>
           ))}
+        </div>
+      </div>
+      
+      <div className="content-area">
+        {isDebugMode && userBiases && (
+          <div className="debug-panel">
+            <div className="debug-section">
+              <h4>Category Biases</h4>
+              <p className="debug-hint">Adjust weights to see real-time changes in article sorting</p>
+              <CategoryBiasEditor
+                initialBiases={userBiases}
+                onBiasesChange={handleBiasesUpdate}
+                editable={true}
+                className="sidebar-editor"
+              />
+            </div>
           </div>
         )}
 
-        {/* Pagination controls */}
-        {pagination.totalPages > 1 && (
-          <div className="pagination">
-            <button 
-              className="pagination-button" 
-              onClick={() => handlePageChange(1)} 
-              disabled={pagination.page === 1}
-            >
-              &laquo;
-            </button>
-            
-            <button 
-              className="pagination-button" 
-              onClick={() => handlePageChange(pagination.page - 1)} 
-              disabled={pagination.page === 1}
-            >
-              &lsaquo;
-            </button>
-            
-            <div className="pagination-info">
-              Page {pagination.page} of {pagination.totalPages}
-            </div>
-            
-            <button 
-              className="pagination-button" 
-              onClick={() => handlePageChange(pagination.page + 1)} 
-              disabled={pagination.page === pagination.totalPages}
-            >
-              &rsaquo;
-            </button>
-            
-            <button 
-              className="pagination-button" 
-              onClick={() => handlePageChange(pagination.totalPages)} 
-              disabled={pagination.page === pagination.totalPages}
-            >
-              &raquo;
-            </button>
+        <div className="article-list">
+          <div className="article-header">
+            <h1>Jaunākās ziņas</h1>
+            <form onSubmit={handleSearch} className="search-form">
+              <input
+                type="text"
+                placeholder="Meklēt rakstus..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="search-input"
+              />
+              <button type="submit" className="search-button">Meklēt</button>
+            </form>
           </div>
-        )}
+          {articles.length === 0 ? (
+            <div className="no-articles">Nav atrasts neviens raksts. Mēģiniet pielietot citus meklēšanas parametrus.</div>
+          ) : (
+            <div className="articles-grid">
+              {articles.map((article) => (
+                <div key={article.id} className="article-card">
+                  {article.image && (
+                    <div className="article-image">
+                      <img src={article.image} alt={article.title} />
+                    </div>
+                  )}
+                  <div className="article-content">
+                    {article.categories && article.categories.length > 0 && (
+                      <div className="article-categories">
+                        {article.categories.map((category) => (
+                          <span key={category} className="category-bubble">
+                            {category}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <h2 className="article-title">{article.title}</h2>
+                    <p className="article-description">{article.description}</p>
+                {/* Display score only when debug mode is enabled */}
+                    {article.score !== undefined && isDebugMode && (
+                      <div className="article-score">
+                        Score: {article.score.toFixed(3)}
+                      </div>
+                    )}
+                    <div className="article-meta">
+                      <span className="article-date">
+                        {new Date(article.publishedAt).toLocaleDateString("lv-LV", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </span>
+                      <a
+                        href={article.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="article-link"
+                      >
+                        Lasīt vairāk
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+        {/* Pagination controls */}
+          {pagination.totalPages > 1 && (
+            <div className="pagination">
+              <button 
+                className="pagination-button" 
+                onClick={() => handlePageChange(1)} 
+                disabled={pagination.page === 1}
+              >
+                &laquo;
+              </button>
+              
+              <button 
+                className="pagination-button" 
+                onClick={() => handlePageChange(pagination.page - 1)} 
+                disabled={pagination.page === 1}
+              >
+                &lsaquo;
+              </button>
+              
+              <div className="pagination-info">
+                Page {pagination.page} of {pagination.totalPages}
+              </div>
+              
+              <button 
+                className="pagination-button" 
+                onClick={() => handlePageChange(pagination.page + 1)} 
+                disabled={pagination.page === pagination.totalPages}
+              >
+                &rsaquo;
+              </button>
+              
+              <button 
+                className="pagination-button" 
+                onClick={() => handlePageChange(pagination.totalPages)} 
+                disabled={pagination.page === pagination.totalPages}
+              >
+                &raquo;
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default ArticleList;

@@ -57,6 +57,7 @@ export const getArticles = async (options = {}) => {
  * @param {number} options.limit - Number of items per page
  * @param {string} options.search - Search query
  * @param {Object} options.filter - Filter options
+ * @param {string} options.category - Specific category to filter by
  * @param {Object} options.biases - User category biases (only needed for non-authenticated users)
  * @param {string} options.sortBy - Field to sort by
  * @param {string} options.sortOrder - Sort order ('ASC' or 'DESC')
@@ -70,6 +71,7 @@ export const getSortedArticles = async (options = {}) => {
       limit = 20,
       search = '',
       filter = {},
+      category = null,
       biases = null,
       sortBy = 'publishedAt',
       sortOrder = 'DESC',
@@ -92,6 +94,11 @@ export const getSortedArticles = async (options = {}) => {
         params.append(`filter.${key}`, value);
       }
     });
+    
+    // Add category filter if provided
+    if (category) {
+      params.append('filter.categories', JSON.stringify([category]));
+    }
 
     // Add biases if provided (for non-authenticated users)
     if (biases) {
