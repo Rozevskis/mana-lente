@@ -33,7 +33,6 @@ export function AuthProvider({ children }) {
         .catch((error) => {
           console.error("Error fetching user data:", error);
           localStorage.removeItem("token");
-          localStorage.removeItem("user");
           delete axios.defaults.headers.common["Authorization"];
         })
         .finally(() => {
@@ -102,7 +101,6 @@ export function AuthProvider({ children }) {
   const logout = () => {
     console.log("Logging out...");
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
     delete axios.defaults.headers.common["Authorization"];
     setCurrentUser(null);
   };

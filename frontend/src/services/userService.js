@@ -1,6 +1,8 @@
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+// use a specific key for storing category biases
+const BIASES_STORAGE_KEY = "category_biases";
 
 /**
  * Get user biases from local storage for non-authenticated users
@@ -8,17 +10,16 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
  */
 export const getUserBiases = () => {
   try {
-    // Check if we have user data in localStorage
-    const userData = localStorage.getItem("user");
-    if (!userData) {
+    // check if we have category biases in localStorage
+    const biasesData = localStorage.getItem(BIASES_STORAGE_KEY);
+    if (!biasesData) {
       return null;
     }
     
-    // Parse the user data and return category biases if available
-    const user = JSON.parse(userData);
-    return user.categoryBiases || null;
+    // Parse and return the category biases
+    return JSON.parse(biasesData);
   } catch (error) {
-    console.error("Error accessing user biases:", error);
+    console.error("Error accessing category biases:", error);
     return null;
   }
 };
@@ -29,19 +30,15 @@ export const getUserBiases = () => {
  */
 export const saveUserBiases = (biases) => {
   try {
-    // Get existing user data or create new object
-    const userData = localStorage.getItem("user");
-    const user = userData ? JSON.parse(userData) : {};
-    
-    // Update biases
-    user.categoryBiases = biases;
-    
-    // Save back to localStorage
-    localStorage.setItem("user", JSON.stringify(user));
+    if (!biases) {
+      console.error("Cannot save empty biases");
+      return false;
+    }
+    localStorage.setItem(BIASES_STORAGE_KEY, JSON.stringify(biases));
     
     return true;
   } catch (error) {
-    console.error("Error saving user biases:", error);
+    console.error("Error saving category biases:", error);
     return false;
   }
 };
