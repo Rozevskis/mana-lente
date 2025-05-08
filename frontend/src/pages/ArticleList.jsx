@@ -6,6 +6,16 @@ import { useSearchParams } from "react-router-dom";
 import CategoryBiasEditor from "../components/articles/CategoryBiasEditor";
 import "./ArticleList.css";
 
+// parse default biases from environment variable
+let parsedDefaultBiases = null;
+try {
+  if (import.meta.env.VITE_DEBUG_BIASES) {
+    parsedDefaultBiases = JSON.parse(import.meta.env.VITE_DEBUG_BIASES);
+  }
+} catch (error) {
+  console.error("Error parsing VITE_DEBUG_BIASES:", error);
+}
+
 const ArticleList = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +30,8 @@ const ArticleList = () => {
   const [userBiases, setUserBiases] = useState(null);
   const { currentUser, isAuthenticated } = useAuth();
   const isDebugMode = import.meta.env.VITE_DEBUG === "true";
+  // use the pre-parsed default biases to avoid parsing on every render
+  const defaultBiases = parsedDefaultBiases;
   
   useEffect(() => {
     // Get pagination parameters from URL or use defaults
@@ -48,6 +60,15 @@ const ArticleList = () => {
         if (biases) {
           console.log("Setting user biases for debug panel:", biases);
           setUserBiases(biases);
+        } else if (defaultBiases && isDebugMode) {
+          // if no biases are available but we have default ones from env, use those
+          console.log("Using default biases from environment variable:", defaultBiases);
+          setUserBiases(defaultBiases);
+          biases = defaultBiases;
+          // only save default biases to localStorage if they're not already there to prevent unnecessary localStorage operations
+          if (!getUserBiases()) {
+            saveUserBiases(defaultBiases);
+          }
         } else {
           console.log("No biases available to set");
         }
@@ -85,7 +106,7 @@ const ArticleList = () => {
     };
 
     fetchArticles();
-  }, [currentUser, isAuthenticated, searchParams, isDebugMode]);
+  }, [currentUser, isAuthenticated, searchParams, isDebugMode, defaultBiases]);
 
   // Handle page change
   const handlePageChange = (newPage) => {
